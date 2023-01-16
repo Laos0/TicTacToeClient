@@ -8,6 +8,8 @@ import * as io from 'socket.io-client'; // this is how you use socket
 })
 export class GameComponent implements OnInit {
 
+  private socket;
+
   // basic board game, 2d array
   boardGame: string[][] = [['','',''], ['','',''], ['','','']];
 
@@ -20,13 +22,20 @@ export class GameComponent implements OnInit {
 
   constructor() 
   { 
-    
+    this.socket = io.connect('http://localhost:8080');
+    this.socket.on('message', (data) => {
+      console.log(data);
+    })
   }
 
   ngOnInit(): void {
-
     this.boardGame[0][0] = 'X';
     console.log(this.boardGame)
+    this.sendMessage();
+  }
+
+  sendMessage(){
+    this.socket.emit('message', "Hello from angular!");
   }
 
 }
