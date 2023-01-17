@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import * as io from 'socket.io-client'; // this is how you use socket
+import { SocketIoService } from 'src/app/services/socket-io-service/socket-io.service';
 
 @Component({
   selector: 'app-game',
@@ -9,7 +10,7 @@ import * as io from 'socket.io-client'; // this is how you use socket
 export class GameComponent implements OnInit {
 
   // connecting to our socket in server
-  private socket = io.connect('http://localhost:8080');
+  //private socket = io.connect('http://localhost:8080');
 
   // basic board game, 2d array
   boardGame: string[][] = [['','',''], ['','',''], ['','','']];
@@ -24,15 +25,21 @@ export class GameComponent implements OnInit {
   isGameOver: boolean
 
 
-  constructor() {} 
+  constructor(private socketService: SocketIoService) 
+  {
+    this.socketService.socket.on('disconnect', (data) => {
+      // Send data to Node.js server here
+      this.socketService.socket.emit('data', 'the fk');
+    })
+  } 
 
   ngOnInit(): void {
     this.boardGame[0][0] = 'X';
     console.log(this.boardGame)
-
+    
     // when user start up the website they are assign X or O player
     // retreiving playerRole data on server side
-    this.socket.on('playerRole', (data) => {
+    this.socketService.socket.on('userRole', (data) => {
       this.player = data;
       console.log("We are " + this.player);
     })
@@ -41,7 +48,7 @@ export class GameComponent implements OnInit {
 
   topLeftSelect(){
     
-    this.socket.emit('clientMgs', "Hello from angular");
+    this.socketService.socket.emit('clientMgs', "Hello from angular");
     console.log("click")
   }
 }
