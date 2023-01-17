@@ -47,8 +47,40 @@ export class GameComponent implements OnInit {
 
 
   topLeftSelect(){
-    
-    this.socketService.socket.emit('clientMgs', "Hello from angular");
-    console.log("click")
+    this.socketService.socket.emit('selectedTile', this.player, 0, 0);
+    console.log("clicked");
+  }
+
+  topRightSelect(){
+    this.socketService.socket.emit('selectedTile', this.player, 0, 2);
+    console.log("clicked");
+  }
+
+  topMidSelect(){
+    this.socketService.socket.emit('selectedTile', this.player, 0, 1);
+  }
+
+  midLeftSelect(){
+    this.socketService.socket.emit('selectedTile', this.player, 1, 0);
+  }
+
+  midMidSelect(){
+    this.socketService.socket.emit('selectedTile', this.player, 1, 1);
+  }
+
+  midRightSelect(){
+    this.socketService.socket.emit('selectedTile', this.player, 1, 2);
+  }
+
+  botLeftSelect(){
+    this.socketService.socket.emit('selectedTile', this.player, 2, 0);
+  }
+
+  botMidSelect(){
+    this.socketService.socket.emit('selectedTile', this.player, 2, 1);
+  }
+
+  botRightSelect(){
+    this.socketService.socket.emit('selectedTile', this.player, 2, 2);
   }
 }
