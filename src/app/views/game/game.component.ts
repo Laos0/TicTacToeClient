@@ -8,7 +8,8 @@ import * as io from 'socket.io-client'; // this is how you use socket
 })
 export class GameComponent implements OnInit {
 
-  private socket;
+  // connecting to our socket in server
+  private socket = io.connect('http://localhost:8080');
 
   // basic board game, 2d array
   boardGame: string[][] = [['','',''], ['','',''], ['','','']];
@@ -16,26 +17,31 @@ export class GameComponent implements OnInit {
   // check whos turn it is
   currentPlayer: string = 'X';
 
+  // the role of the player
+  player: string; 
+
   // check if game is over
   isGameOver: boolean
 
 
-  constructor() 
-  { 
-    this.socket = io.connect('http://localhost:8080');
-    this.socket.on('message', (data) => {
-      console.log(data);
-    })
-  }
+  constructor() {} 
 
   ngOnInit(): void {
     this.boardGame[0][0] = 'X';
     console.log(this.boardGame)
-    this.sendMessage();
+
+    // when user start up the website they are assign X or O player
+    // retreiving playerRole data on server side
+    this.socket.on('playerRole', (data) => {
+      this.player = data;
+      console.log("We are " + this.player);
+    })
   }
 
-  sendMessage(){
-    this.socket.emit('message', "Hello from angular!");
-  }
 
+  topLeftSelect(){
+    
+    this.socket.emit('clientMgs', "Hello from angular");
+    console.log("click")
+  }
 }
