@@ -1,21 +1,19 @@
 <table class="boardGame">
     <tr>
-        <td (click)="topLeftSelect()"></td>
-        <td (click)="topMidSelect()"></td>
-        <td (click)="topRightSelect()"></td>
+        <td (click)="topLeftSelect()">{{boardGame[0][0]}}</td>
+        <td (click)="topMidSelect()">{{boardGame[0][1]}}</td>
+        <td (click)="topRightSelect()">{{boardGame[0][2]}}</td>
     </tr>
 
     <tr>
-        <td (click)="midLeftSelect()"></td>
-        <td (click)="midMidSelect()"></td>
-        <td (click)="midRightSelect()"></td>
+        <td (click)="midLeftSelect()">{{boardGame[1][0]}}</td>
+        <td (click)="midMidSelect()">{{boardGame[1][1]}}</td>
+        <td (click)="midRightSelect()">{{boardGame[1][2]}}</td>
     </tr>
     
     <tr>
-        <td (click)="botLeftSelect()"></td>
-        <td (click)="botMidSelect()"></td>
-        <td (click)="botRightSelect()"></td>
+        <td (click)="botLeftSelect()">{{boardGame[2][0]}}</td>
+        <td (click)="botMidSelect()">{{boardGame[2][1]}}</td>
+        <td (click)="botRightSelect()">{{boardGame[2][2]}}</td>
     </tr>
 </table>
-
-<ng-template>x</ng-template>

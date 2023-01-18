@@ -1,11 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import * as io from 'socket.io-client'; // this is how you use socket
 import { SocketIoService } from 'src/app/services/socket-io-service/socket-io.service';
 
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
-  styleUrls: ['./game.component.scss']
+  styleUrls: ['./game.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GameComponent implements OnInit {
 
@@ -15,8 +16,12 @@ export class GameComponent implements OnInit {
   // basic board game, 2d array
   boardGame: string[][] = [['','',''], ['','',''], ['','','']];
 
+  test: string = 'O';
+
   // check whos turn it is
   currentPlayer: string = 'X';
+
+  isPlayerX: boolean = true;
 
   // the role of the player
   player: string; 
@@ -25,7 +30,7 @@ export class GameComponent implements OnInit {
   isGameOver: boolean
 
 
-  constructor(private socketService: SocketIoService) 
+  constructor(private socketService: SocketIoService, private changeRef: ChangeDetectorRef) 
   {
     this.socketService.socket.on('disconnect', (data) => {
       // Send data to Node.js server here
@@ -34,8 +39,6 @@ export class GameComponent implements OnInit {
   } 
 
   ngOnInit(): void {
-    this.boardGame[0][0] = 'X';
-    console.log(this.boardGame)
     
     // when user start up the website they are assign X or O player
     // retreiving playerRole data on server side
@@ -43,17 +46,27 @@ export class GameComponent implements OnInit {
       this.player = data;
       console.log("We are " + this.player);
     })
+
+    // this is confirmation from server-side go ahead and insert player on board
+    this.socketService.socket.on('insertionSuccessful', (player, gameBoard) => {
+      console.log("Successful inserted " + player);
+
+      this.boardGame = gameBoard;
+
+      this.changeRef.detectChanges();
+    })
+    this.changeRef.detectChanges();
   }
 
 
   topLeftSelect(){
     this.socketService.socket.emit('selectedTile', this.player, 0, 0);
-    console.log("clicked");
+    console.log(this.boardGame);
   }
 
   topRightSelect(){
     this.socketService.socket.emit('selectedTile', this.player, 0, 2);
-    console.log("clicked");
+    console.log(this.boardGame);
   }
 
   topMidSelect(){
