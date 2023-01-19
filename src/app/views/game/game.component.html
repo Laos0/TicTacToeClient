@@ -1,3 +1,4 @@
+
 <table class="boardGame">
     <tr>
         <td (click)="topLeftSelect()">{{boardGame[0][0]}}</td>
@@ -17,3 +18,10 @@
         <td (click)="botRightSelect()">{{boardGame[2][2]}}</td>
     </tr>
 </table>
+<div *ngIf="isGameOver then gameOver">
+
+</div>
+
+
+
+<ng-template #gameOver>GAME OVER {{winner}} wins!</ng-template>

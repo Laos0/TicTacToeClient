@@ -63,7 +63,8 @@ export class GameComponent implements OnInit {
       this.isGameOver = gameOverData.isGameOver;
       this.winner = gameOverData.winner;
 
-      console.log(gameOverData.message + " The winner is: " + gameOverData.winner);
+      console.log(gameOverData.message + " The winner is: " + gameOverData.winner + " Is it gameover? " + this.isGameOver);
+      this.changeRef.detectChanges();
     })
 
   }
