@@ -16,8 +16,6 @@ export class GameComponent implements OnInit {
   // basic board game, 2d array
   boardGame: string[][] = [['','',''], ['','',''], ['','','']];
 
-  test: string = 'O';
-
   // check whos turn it is
   currentPlayer: string = 'X';
 
@@ -27,7 +25,10 @@ export class GameComponent implements OnInit {
   player: string; 
 
   // check if game is over
-  isGameOver: boolean
+  isGameOver: boolean;
+
+  // the winner
+  winner: string;
 
 
   constructor(private socketService: SocketIoService, private changeRef: ChangeDetectorRef) 
@@ -55,7 +56,16 @@ export class GameComponent implements OnInit {
 
       this.changeRef.detectChanges();
     })
-    this.changeRef.detectChanges();
+    
+    // listens to when game is over and a winner is declared
+    // the gameOverData is a json with data: message, isGameOver, and winner
+    this.socketService.socket.on('gameOver', (gameOverData) => {
+      this.isGameOver = gameOverData.isGameOver;
+      this.winner = gameOverData.winner;
+
+      console.log(gameOverData.message + " The winner is: " + gameOverData.winner);
+    })
+
   }
 
 
