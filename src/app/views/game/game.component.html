@@ -1,21 +1,21 @@
 
 <table class="boardGame">
     <tr>
-        <td (click)="topLeftSelect()">{{boardGame[0][0]}}</td>
-        <td (click)="topMidSelect()">{{boardGame[0][1]}}</td>
-        <td (click)="topRightSelect()">{{boardGame[0][2]}}</td>
+        <td class="topLeftTile" (click)="topLeftSelect()">{{boardGame[0][0]}}</td>
+        <td class="topMidTile" (click)="topMidSelect()">{{boardGame[0][1]}}</td>
+        <td class="topRightTile" (click)="topRightSelect()">{{boardGame[0][2]}}</td>
     </tr>
 
     <tr>
-        <td (click)="midLeftSelect()">{{boardGame[1][0]}}</td>
-        <td (click)="midMidSelect()">{{boardGame[1][1]}}</td>
-        <td (click)="midRightSelect()">{{boardGame[1][2]}}</td>
+        <td class="midLeftTile" (click)="midLeftSelect()">{{boardGame[1][0]}}</td>
+        <td class="midMidTile" (click)="midMidSelect()">{{boardGame[1][1]}}</td>
+        <td class="midRightTile" (click)="midRightSelect()">{{boardGame[1][2]}}</td>
     </tr>
     
     <tr>
-        <td (click)="botLeftSelect()">{{boardGame[2][0]}}</td>
-        <td (click)="botMidSelect()">{{boardGame[2][1]}}</td>
-        <td (click)="botRightSelect()">{{boardGame[2][2]}}</td>
+        <td class="botLeftTile" (click)="botLeftSelect()">{{boardGame[2][0]}}</td>
+        <td class="botMidTile" (click)="botMidSelect()">{{boardGame[2][1]}}</td>
+        <td class="botRightTile"(click)="botRightSelect()">{{boardGame[2][2]}}</td>
     </tr>
 </table>
 <div *ngIf="isGameOver then gameOver">
@@ -24,4 +24,8 @@
 
 
 
-<ng-template #gameOver>GAME OVER {{winner}} wins!</ng-template>
+<ng-template #gameOver>
+    <span *ngIf="!isTieGame">GAME OVER {{winner}} wins! </span> <br>
+    <span *ngIf="isTieGame">{{winner}} Game! <br></span> 
+    <button (click)="restart()">Restart</button>
+</ng-template>

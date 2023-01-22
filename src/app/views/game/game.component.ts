@@ -30,6 +30,9 @@ export class GameComponent implements OnInit {
   // the winner
   winner: string;
 
+  // if there is a tie game
+  isTieGame: boolean = false;
+
 
   constructor(private socketService: SocketIoService, private changeRef: ChangeDetectorRef) 
   {
@@ -64,11 +67,22 @@ export class GameComponent implements OnInit {
       this.winner = gameOverData.winner;
 
       console.log(gameOverData.message + " The winner is: " + gameOverData.winner + " Is it gameover? " + this.isGameOver);
+      if(gameOverData.winner === 'TIE'){
+        this.isTieGame = true;
+      }
       this.changeRef.detectChanges();
     })
 
   }
 
+  // Drawing line when there is a winner
+  drawWinningLine(){
+    //const canvas = document.
+  }
+
+  restart(){
+    this.socketService.socket.emit('restart', true);
+  }
 
   topLeftSelect(){
     this.socketService.socket.emit('selectedTile', this.player, 0, 0);

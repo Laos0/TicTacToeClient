@@ -11,4 +11,29 @@ td {
     text-align: center;
     vertical-align: middle;
     font-size: 100px;
-  }
+}
+
+.topLeftTile, .topRightTile, .botLeftTile, .botRightTile {
+    border: none;
+}
+
+.topMidTile {
+    border-top: none;
+}
+
+.botMidTile {
+    border-bottom: none;
+}
+
+.midLeftTile {
+    border-left: none;
+}
+
+.midRightTile {
+    border-right: none;
+}
+
+.midMidTile {
+    border: none;
+}
+
