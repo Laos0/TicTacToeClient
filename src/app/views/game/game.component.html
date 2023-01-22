@@ -1,26 +1,32 @@
-
-<table class="boardGame">
-    <tr>
-        <td class="topLeftTile" (click)="topLeftSelect()">{{boardGame[0][0]}}</td>
-        <td class="topMidTile" (click)="topMidSelect()">{{boardGame[0][1]}}</td>
-        <td class="topRightTile" (click)="topRightSelect()">{{boardGame[0][2]}}</td>
-    </tr>
-
-    <tr>
-        <td class="midLeftTile" (click)="midLeftSelect()">{{boardGame[1][0]}}</td>
-        <td class="midMidTile" (click)="midMidSelect()">{{boardGame[1][1]}}</td>
-        <td class="midRightTile" (click)="midRightSelect()">{{boardGame[1][2]}}</td>
-    </tr>
+<div class="boardGameContainer">
+    <table class="boardGame">
+        <tr>
+            <td #topLeft class="topLeftTile" (click)="topLeftSelect()">{{boardGame[0][0]}}</td>
+            <td #topMid class="topMidTile" (click)="topMidSelect()">{{boardGame[0][1]}}</td>
+            <td #topRight class="topRightTile" (click)="topRightSelect()">{{boardGame[0][2]}}</td>
+        </tr>
     
-    <tr>
-        <td class="botLeftTile" (click)="botLeftSelect()">{{boardGame[2][0]}}</td>
-        <td class="botMidTile" (click)="botMidSelect()">{{boardGame[2][1]}}</td>
-        <td class="botRightTile"(click)="botRightSelect()">{{boardGame[2][2]}}</td>
-    </tr>
-</table>
+        <tr>
+            <td #midLeft class="midLeftTile" (click)="midLeftSelect()">{{boardGame[1][0]}}</td>
+            <td #midMid class="midMidTile" (click)="midMidSelect()">{{boardGame[1][1]}}</td>
+            <td #midRight class="midRightTile" (click)="midRightSelect()">{{boardGame[1][2]}}</td>
+        </tr>
+        
+        <tr>
+            <td #botLeft class="botLeftTile" (click)="botLeftSelect()">{{boardGame[2][0]}}</td>
+            <td #botMid class="botMidTile" (click)="botMidSelect()">{{boardGame[2][1]}}</td>
+            <td #botRight class="botRightTile"(click)="botRightSelect()">{{boardGame[2][2]}}</td>
+        </tr>
+    </table>
+</div>
 <div *ngIf="isGameOver then gameOver">
 
 </div>
+
+<div>
+    <canvas #myCanvas></canvas>
+</div>
+
 
 
 

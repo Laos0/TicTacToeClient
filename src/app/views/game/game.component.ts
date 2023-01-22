@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild, Renderer2 } from '@angular/core';
 import * as io from 'socket.io-client'; // this is how you use socket
 import { SocketIoService } from 'src/app/services/socket-io-service/socket-io.service';
 
@@ -9,6 +9,10 @@ import { SocketIoService } from 'src/app/services/socket-io-service/socket-io.se
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GameComponent implements OnInit {
+
+  @ViewChild('myCanvas') canvas: ElementRef<HTMLCanvasElement>;
+  @ViewChild('topLeft') topLeft: ElementRef<HTMLCanvasElement>;
+  @ViewChild('topRight') topRight: ElementRef<HTMLCanvasElement>;
 
   // connecting to our socket in server
   //private socket = io.connect('http://localhost:8080');
@@ -36,14 +40,11 @@ export class GameComponent implements OnInit {
 
   constructor(private socketService: SocketIoService, private changeRef: ChangeDetectorRef) 
   {
-    this.socketService.socket.on('disconnect', (data) => {
-      // Send data to Node.js server here
-      this.socketService.socket.emit('data', 'the fk');
-    })
+   
   } 
 
   ngOnInit(): void {
-    
+  
     // when user start up the website they are assign X or O player
     // retreiving playerRole data on server side
     this.socketService.socket.on('userRole', (data) => {
@@ -73,6 +74,20 @@ export class GameComponent implements OnInit {
       this.changeRef.detectChanges();
     })
 
+  }
+
+  ngAfterViewInit(){
+
+    const rect = this.topLeft.nativeElement.getBoundingClientRect();
+    const rect2 = this.topRight.nativeElement.getBoundingClientRect();
+    console.log("The position of top left: " + rect.top + ' ' + rect.left);
+
+
+    const ctx = this.canvas.nativeElement.getContext('2d');
+    ctx.beginPath();
+    ctx.moveTo(rect.left, rect.top); // first point
+    ctx.lineTo(rect2.left, rect2.top); // second point
+    ctx.stroke();
   }
 
   // Drawing line when there is a winner

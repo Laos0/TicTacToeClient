@@ -1,7 +1,11 @@
+.boardGameContainer{
+    margin: 100px;
+    
+}
+
 .boardGame {
-    width: 1000px;
-    height: 800px;
-    text-align: center;
+    width: 75vw; /* this is how you use responsive design this is 75% of viewport width */
+    height: 75vh; /* this is how you use responsive design this is 75% of viewport height */
 }
 
 td {
@@ -11,6 +15,11 @@ td {
     text-align: center;
     vertical-align: middle;
     font-size: 100px;
+}
+
+canvas {
+    position: absolute;
+    z-index: 1;
 }
 
 .topLeftTile, .topRightTile, .botLeftTile, .botRightTile {
