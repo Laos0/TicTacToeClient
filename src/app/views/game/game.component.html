@@ -26,6 +26,7 @@
 <div class="playerXTurn" *ngIf="currentPlayer === 'X' ">X Turn!</div>
 <div class="playerOTurn" *ngIf="currentPlayer === 'O' ">O Turn!</div>
 <div class="player">You are {{player}}</div>
+<div class="xScore"><span class="characX">X:</span>{{xScore}}</div><div class="oScore"><span class="characO">O:</span>{{oScore}}</div>
 
 <div class="gameOver" *ngIf="isGameOver then gameOver">
 

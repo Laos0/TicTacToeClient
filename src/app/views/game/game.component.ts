@@ -22,14 +22,14 @@ export class GameComponent implements OnInit {
   @ViewChild('botMid') botMid: ElementRef<HTMLElement>;
   @ViewChild('botRight') botRight: ElementRef<HTMLElement>;
 
-  // connecting to our socket in server
-  //private socket = io.connect('http://localhost:8080');
+  // TODO: TESTING the canvas
+  ctx: CanvasRenderingContext2D;
 
   // basic board game, 2d array
   boardGame: string[][] = [['','',''], ['','',''], ['','','']];
 
   // hashmap to bind boardGame tiles to ElementRef
-  boardTilesHashMap: Map<number, ElementRef> = new Map<number, ElementRef>();
+  private boardTilesHashMap: Map<number, ElementRef> = new Map<number, ElementRef>();
 
   // check whos turn it is
   currentPlayer: string = 'X';
@@ -51,6 +51,9 @@ export class GameComponent implements OnInit {
   // the winning tiles
   winningTiles: number[];
 
+  // X and O score
+  xScore: number = 0;
+  oScore: number = 0;
 
   constructor(private socketService: SocketIoService, private changeRef: ChangeDetectorRef, private eleRef: ElementRef,
     private renderer: Renderer2) 
@@ -83,14 +86,18 @@ export class GameComponent implements OnInit {
     })
     
     // listens to when game is over and a winner is declared
-    // the gameOverData is a json with data: message, isGameOver, winner, and winTiles array
+    // the gameOverData is a json with data: message, isGameOver, winner, winTiles array, curPlayer, playerXScore, and playerOScore
     this.socketService.socket.on('gameOver', (gameOverData) => {
-      this.isGameOver = gameOverData.isGameOver;
-      this.winner = gameOverData.winner; 
+      this.isGameOver = gameOverData.isGameOver; // setting it to be true
+      this.winner = gameOverData.winner; // the winner
 
       console.log(gameOverData.message + " The winner is: " + gameOverData.winner + " Is it gameover? " + this.isGameOver);
       this.winningTiles = gameOverData.winTiles; // storing the winning tiles
       console.log("The winning tiles are: " + this.winningTiles);
+
+      console.log("PLAYER X's SCORE: ", gameOverData.playerXScore);
+      this.xScore = gameOverData.playerXScore;
+      this.oScore = gameOverData.playerOScore;
 
       if(gameOverData.winner === 'TIE'){
         this.isTieGame = true;
@@ -98,14 +105,26 @@ export class GameComponent implements OnInit {
         // if there is no tie, then draw winning line
         this.drawWinningLine();
       }
-      //this.changeRef.detectChanges(); // update the views manually after changes
+      this.changeRef.detectChanges(); // update the views manually after changes
     })
+
+    this.socketService.socket.on('restartComplete', (data) => {
+      this.boardGame = data.gameBoard; // set boardGame to be empty again = ''
+
+      // clearing the canvas
+      //this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
+
+      this.isGameOver = false; // deflagging isGameOVer
+      
+      // letting player 0 goes first now
+      this.currentPlayer = 'O';
+    
+      this.changeRef.detectChanges();
+    });
 
   }
 
   ngAfterViewInit(){
-
-    this.updateCanvasWidthHeight();
 
     // set up the hashmap in ngAfterViewInit so that the elementRef are rendered
     this.boardTilesHashMap.set(0o0, this.topLeft); // 00, 01, 02 are octal number we would have to convert to decimal
