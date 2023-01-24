@@ -64,14 +64,20 @@ export class GameComponent implements OnInit {
     // retreiving playerRole data on server side
     this.socketService.socket.on('userRole', (data) => {
       this.player = data;
+      this.changeRef.detectChanges();
       console.log("We are " + this.player);
     })
 
-    // this is confirmation from server-side go ahead and insert player on board
+    // this is confirmation from server-side that the player's insertion is successful -> update the boardGame
     this.socketService.socket.on('insertionSuccessful', (player, gameBoard) => {
       console.log("Successful inserted " + player);
 
       this.boardGame = gameBoard;
+      if(this.currentPlayer === 'X'){
+        this.currentPlayer = 'O';
+      }else{
+        this.currentPlayer = 'X';
+      }
 
       this.changeRef.detectChanges();
     })

@@ -23,11 +23,13 @@
     </table>
 </div>
 <br><br>
-<div *ngIf="isGameOver then gameOver">
+<div class="playerXTurn" *ngIf="currentPlayer === 'X' ">X Turn!</div>
+<div class="playerOTurn" *ngIf="currentPlayer === 'O' ">O Turn!</div>
+<div class="player">You are {{player}}</div>
+
+<div class="gameOver" *ngIf="isGameOver then gameOver">
 
 </div>
-
-
 
 
 <ng-template #gameOver>

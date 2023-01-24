@@ -1,3 +1,17 @@
+.playerXTurn{
+    text-align: center;
+}
+
+.playerOTurn{
+    text-align: center;
+}
+
+.player {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
 .boardGameContainer{
     margin-top: 100px;
 }
@@ -22,7 +36,7 @@ td {
 canvas {
     position: absolute;
     z-index: 1;
-    border: solid 2px black;
+    /*border: solid 2px black;*/
 }
 
 /* this is the div containing the canvas */
