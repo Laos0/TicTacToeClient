@@ -1,11 +1,11 @@
 .boardGameContainer{
-    margin: 100px;
-    
+    margin-top: 100px;
 }
 
 .boardGame {
-    width: 75vw; /* this is how you use responsive design this is 75% of viewport width */
-    height: 75vh; /* this is how you use responsive design this is 75% of viewport height */
+    width: 500px; /* this is how you use responsive design this is 75% of viewport width */
+    height: 500px; /* this is how you use responsive design this is 75% of viewport height */
+    margin: 0 auto;
 }
 
 td {
@@ -20,6 +20,12 @@ td {
 canvas {
     position: absolute;
     z-index: 1;
+  
+}
+
+.canvas {
+    display: flex;
+    justify-content: center;
 }
 
 .topLeftTile, .topRightTile, .botLeftTile, .botRightTile {
