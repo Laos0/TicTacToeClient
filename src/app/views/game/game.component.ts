@@ -89,10 +89,10 @@ export class GameComponent implements OnInit {
       if(gameOverData.winner === 'TIE'){
         this.isTieGame = true;
       }else{
-        // TODO: The error happens here
+        // if there is no tie, then draw winning line
         this.drawWinningLine();
       }
-      this.changeRef.detectChanges(); // update the views manually after changes
+      //this.changeRef.detectChanges(); // update the views manually after changes
     })
 
   }
@@ -139,6 +139,9 @@ export class GameComponent implements OnInit {
         ctx.moveTo(startingPoint.left, startingPoint.top); // this is our starting point x and y coordinate
         ctx.lineTo(endingPoint.left, endingPoint.top); // this is our ending point of x and y ccoordinate
         ctx.stroke(); // draw
+        console.log("The x and y pos of starting point: " + startingPoint.left + ", " + startingPoint.top);
+        console.log("The x and y pos of ending point: " + endingPoint.left + ", " + endingPoint.top);
+      
       }else{
         console.error('startingPoint or endingPoint is null', startingPoint, endingPoint)
       }
@@ -221,15 +224,16 @@ export class GameComponent implements OnInit {
 
   private updateCanvasWidthHeight(): void {
     const element = this.eleRef.nativeElement;
-    const width = element.clientWidth;
-    const height = element.clientHeight;
+    const width = element.clientWidth; // ignore for now
+    const height = element.clientHeight; // ignore for now
 
     console.log('Width: ' + width + " " + "Height: " + height);
 
-    this.renderer.setAttribute(this.canvas.nativeElement, 'width', '500');
-    this.renderer.setAttribute(this.canvas.nativeElement, 'height', '500');
+    //this.renderer.setAttribute(this.canvas.nativeElement, 'width', '500');
+    //this.renderer.setAttribute(this.canvas.nativeElement, 'height', '500');
   }
 
+  // TODO: change all these into one method like: selectedTiles(row, col) -> on the html side just pass in the right row and col
   topLeftSelect(): void{
     this.socketService.socket.emit('selectedTile', this.player, 0, 0);
     console.log(this.boardGame);

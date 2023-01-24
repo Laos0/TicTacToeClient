@@ -1,4 +1,7 @@
 <div class="boardGameContainer">
+    <div class="canvas" *ngIf="isGameOver">
+        <canvas #myCanvas width="500px" height="500px"></canvas>
+    </div>
     <table class="boardGame">
         <tr>
             <td #topLeft class="topLeftTile" (click)="topLeftSelect()">{{boardGame[0][0]}}</td>
@@ -19,12 +22,9 @@
         </tr>
     </table>
 </div>
+<br><br>
 <div *ngIf="isGameOver then gameOver">
 
-</div>
-
-<div class="canvas">
-    <canvas #myCanvas></canvas>
 </div>
 
 
