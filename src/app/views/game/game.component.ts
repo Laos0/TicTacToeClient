@@ -1,6 +1,4 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild, Renderer2 } from '@angular/core';
-import { first } from 'rxjs';
-import * as io from 'socket.io-client'; // this is how you use socket
 import { SocketIoService } from 'src/app/services/socket-io-service/socket-io.service';
 
 @Component({
@@ -95,15 +93,16 @@ export class GameComponent implements OnInit {
       this.winningTiles = gameOverData.winTiles; // storing the winning tiles
       console.log("The winning tiles are: " + this.winningTiles);
 
-      console.log("PLAYER X's SCORE: ", gameOverData.playerXScore);
-      this.xScore = gameOverData.playerXScore;
-      this.oScore = gameOverData.playerOScore;
-
       if(gameOverData.winner === 'TIE'){
         this.isTieGame = true;
       }else{
+        //this.isTieGame = false;
         // if there is no tie, then draw winning line
         this.drawWinningLine();
+        
+        // update both playes' score
+        this.xScore = gameOverData.playerXScore;
+        this.oScore = gameOverData.playerOScore;
       }
       this.changeRef.detectChanges(); // update the views manually after changes
     })
@@ -245,6 +244,7 @@ export class GameComponent implements OnInit {
 
   restart(){
     this.socketService.socket.emit('restart', true);
+    this.isTieGame = false;
   }
 
   private updateCanvasWidthHeight(): void {
