@@ -20,7 +20,9 @@ export class GameComponent implements OnInit {
   @ViewChild('botMid') botMid: ElementRef<HTMLElement>;
   @ViewChild('botRight') botRight: ElementRef<HTMLElement>;
 
-  // TODO: TESTING the canvas
+  @ViewChild('rocket') rocket: ElementRef<HTMLElement>;
+
+  // TODO: TESTING the canvas OKAY TO DELETE
   ctx: CanvasRenderingContext2D;
 
   // basic board game, 2d array
@@ -58,6 +60,9 @@ export class GameComponent implements OnInit {
   xScore: number = 0;
   oScore: number = 0;
 
+  // animations
+  isAnimating = false;
+
   constructor(private socketService: SocketIoService, private changeRef: ChangeDetectorRef, private eleRef: ElementRef,
     private renderer: Renderer2) 
   {
@@ -65,11 +70,13 @@ export class GameComponent implements OnInit {
   } 
 
   ngOnInit(): void {
-  
     // when user start up the website they are assign X or O player
     // retreiving playerRole data on server side
     this.socketService.socket.on('userRole', (data) => {
       this.player = data;
+      if(this.player === 'X'){
+        this.isAnimating = true;
+      }
       this.changeRef.detectChanges();
       console.log("We are " + this.player);
     })
@@ -85,6 +92,22 @@ export class GameComponent implements OnInit {
         this.currentPlayer = 'X';
       }
 
+      this.changeRef.detectChanges();
+    });
+
+    // when a user selects a tile, we turn off their animations
+    this.socketService.socket.on('animationOff', (data) => {
+      console.log("Is the animation off?: ", data);
+      this.isAnimating = data;
+      this.changeRef.detectChanges();
+    });
+
+    this.socketService.socket.on('animationOn', (data) => {
+      console.log('The current player is: ', data.curPlayer, " and ", this.currentPlayer);
+      if(this.player === data.curPlayer){
+        console.log("YES IT IS THE RIGHT PLAYER MOTHER")
+        this.isAnimating = data.turnAnimationOn;
+      }
       this.changeRef.detectChanges();
     })
     
@@ -121,7 +144,7 @@ export class GameComponent implements OnInit {
         
       }
       this.changeRef.detectChanges(); // update the views manually after changes
-    })
+    });
 
     this.socketService.socket.on('restartComplete', (data) => {
       this.boardGame = data.gameBoard; // set boardGame to be empty again = ''
@@ -132,7 +155,7 @@ export class GameComponent implements OnInit {
       this.isGameOver = false; // deflagging isGameOVer
       
       // letting player 0 goes first now
-      this.currentPlayer = 'O';
+      this.currentPlayer = data.curPlayer;
     
       this.changeRef.detectChanges();
     });
@@ -153,8 +176,10 @@ export class GameComponent implements OnInit {
     this.boardTilesHashMap.set(20, this.botLeft);
     this.boardTilesHashMap.set(21, this.botMid);
     this.boardTilesHashMap.set(22, this.botRight);
+
   }
 
+  // TODO: This was for drawing on a canvas: OKAY TO DELETE
   // Drawing line when there is a winner
   drawWinningLine(){
     this.changeRef.detectChanges();
@@ -193,6 +218,7 @@ export class GameComponent implements OnInit {
   }
 
 
+  // TODO: This was for drawing on a canvas: OKAY TO DELETE
   // returns ElementRef so we can do elementRef.nativeElement.getBoundingClientRect
   getStartingPoint(): ElementRef{
     // This will return the correct ElementRef such as topLeft, botMid, midRight etc...
@@ -226,7 +252,7 @@ export class GameComponent implements OnInit {
     
   }
 
-  // TODO: Something about this is not right
+  // TODO: This was for drawing on a canvas: OKAY TO DELETE
   getEndingPoint(): ElementRef{
     // This will return the correct ElementRef such as topLeft, botMid, midRight etc...
     if(this.winningTiles[4] === 0){ // winning tiles ex: [0,0,1,0,2,0]
@@ -258,6 +284,7 @@ export class GameComponent implements OnInit {
     return this.boardTilesHashMap.get(rowColNum); // what we got was topRightTile
   }
 
+  // after each gameover, after 5 seconds all the followings are executed
   restart(){
     setTimeout(() => {
       this.socketService.socket.emit('restart', true);
@@ -268,6 +295,7 @@ export class GameComponent implements OnInit {
     }, 3000);
   }
 
+  // NOTE: This was the canvas approach for drawing line TODO: OKAY TO DELETE
   private updateCanvasWidthHeight(): void {
     const element = this.eleRef.nativeElement;
     const width = element.clientWidth; // ignore for now
@@ -279,45 +307,14 @@ export class GameComponent implements OnInit {
     //this.renderer.setAttribute(this.canvas.nativeElement, 'height', '500');
   }
 
-  // TODO: change all these into one method like: selectedTiles(row, col) -> on the html side just pass in the right row and col
-  topLeftSelect(): void{
-    this.socketService.socket.emit('selectedTile', this.player, 0, 0);
+  // when the player selects a tile
+  selectTile(row, col){
+    this.socketService.socket.emit('selectedTile', this.player, row, col, this.isAnimating);
     console.log(this.boardGame);
   }
 
-  topRightSelect(){
-    this.socketService.socket.emit('selectedTile', this.player, 0, 2);
-    console.log(this.boardGame);
-  }
 
-  topMidSelect(){
-    this.socketService.socket.emit('selectedTile', this.player, 0, 1);
-  }
-
-  midLeftSelect(){
-    this.socketService.socket.emit('selectedTile', this.player, 1, 0);
-  }
-
-  midMidSelect(){
-    this.socketService.socket.emit('selectedTile', this.player, 1, 1);
-  }
-
-  midRightSelect(){
-    this.socketService.socket.emit('selectedTile', this.player, 1, 2);
-  }
-
-  botLeftSelect(){
-    this.socketService.socket.emit('selectedTile', this.player, 2, 0);
-  }
-
-  botMidSelect(){
-    this.socketService.socket.emit('selectedTile', this.player, 2, 1);
-  }
-
-  botRightSelect(){
-    this.socketService.socket.emit('selectedTile', this.player, 2, 2);
-  }
-
+  // resetting the winningLines array after every game over
   resetWinningLine(){
     for(let i = 0; i < this.winningLines.length; i++){
       this.winningLines[i] = false;
@@ -362,4 +359,5 @@ export class GameComponent implements OnInit {
         this.winningLines[7] = true;
     }
   }
+
 }

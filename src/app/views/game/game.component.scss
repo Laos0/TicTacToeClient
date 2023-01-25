@@ -1,3 +1,7 @@
+.characX, .characO {
+    font-size: 40px;
+}
+
 .playerXTurn{
     text-align: center;
 }
@@ -10,6 +14,12 @@
     text-align: center;
     margin-top: 20px;
     margin-bottom: 20px;
+    font-size: 50px;
+    animation: easeInOut 1s ease-in-out infinite;
+}
+
+.animation-stopped {
+    animation: none;
 }
 
 .boardGameContainer{
@@ -81,9 +91,12 @@ canvas {
 }
 
 .parent{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.gameOver {
+    font-size: 50px;
 }
 
 .line {
@@ -101,6 +114,7 @@ canvas {
     display: none;
 }
 
+// Winning lines 
 .row1 {
     top: 185px;
 }
@@ -110,11 +124,11 @@ canvas {
 }
 
 .row3 {
-    top: 519px;
+    top: 511px;
 }
 
 .col1 {
-    top: 350px;
+    top: 367px;
     transform: rotate(90deg) translate(10px, 165px);
 }
 
@@ -129,12 +143,12 @@ canvas {
 }
 
 .dia1 {
-    top: 360px;
+    top: 351px;
     transform: rotate(45deg);
 }
 
 .dia2 {
-    top: 360px;
+    top: 349px;
     transform: rotate(-45deg);
 }
 
@@ -143,3 +157,43 @@ canvas {
     height: 500px;
     margin: 0 auto;
 }
+
+// CSS animation
+ 
+.rocket{
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    animation: fly 3s infinite ease-in alternate; // to use the animation do this 6 params
+}
+
+// fly is the name
+@keyframes fly {
+    0% {
+        transform: translateX(0);
+    }
+    33% {
+        transform: translateY(100%);
+    }
+    66% {
+        transform: translateX(100%) translateY(100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+@keyframes easeInOut {
+    0% {
+
+      opacity: 0;
+    }
+    50% {
+
+      opacity: 1;
+    }
+    100% {
+
+      opacity: 0;
+    }
+  }
