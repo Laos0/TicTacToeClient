@@ -26,6 +26,9 @@ export class GameComponent implements OnInit {
   // basic board game, 2d array
   boardGame: string[][] = [['','',''], ['','',''], ['','','']];
 
+  // array of booleans to draw a certain winning line
+  winningLines: boolean[] = [false, false, false, false, false, false, false, false];
+
   // hashmap to bind boardGame tiles to ElementRef
   private boardTilesHashMap: Map<number, ElementRef> = new Map<number, ElementRef>();
 
@@ -48,6 +51,8 @@ export class GameComponent implements OnInit {
 
   // the winning tiles
   winningTiles: number[];
+
+  isThereWinner: boolean = false;
 
   // X and O score
   xScore: number = 0;
@@ -95,25 +100,24 @@ export class GameComponent implements OnInit {
 
       if(gameOverData.winner === 'TIE'){
         this.isTieGame = true;
-
-        setTimeout(() => {
-          // after 3 seconds restart() runs
-          this.restart();
-        }, 3000);
+        this.isThereWinner = false;
+        this.restart();
         
       }else{
         //this.isTieGame = false;
         // if there is no tie, then draw winning line
-        this.drawWinningLine();
+        //this.drawWinningLine();
         
         // update both playes' score
         this.xScore = gameOverData.playerXScore;
         this.oScore = gameOverData.playerOScore;
 
-        setTimeout(() => {
-          // after 3 seconds restart() runs
-          this.restart();
-        }, 3000);
+        this.isThereWinner = true;
+
+        this.showWinningLine(this.winningTiles);
+
+        this.restart();
+        console.log("This is the winning Tiles after restart: ", this.winningLines);
         
       }
       this.changeRef.detectChanges(); // update the views manually after changes
@@ -255,8 +259,13 @@ export class GameComponent implements OnInit {
   }
 
   restart(){
-    this.socketService.socket.emit('restart', true);
-    this.isTieGame = false;
+    setTimeout(() => {
+      this.socketService.socket.emit('restart', true);
+      this.isTieGame = false;
+      this.isThereWinner = false;
+      this.winningTiles = [];
+      this.resetWinningLine();    
+    }, 3000);
   }
 
   private updateCanvasWidthHeight(): void {
@@ -307,5 +316,50 @@ export class GameComponent implements OnInit {
 
   botRightSelect(){
     this.socketService.socket.emit('selectedTile', this.player, 2, 2);
+  }
+
+  resetWinningLine(){
+    for(let i = 0; i < this.winningLines.length; i++){
+      this.winningLines[i] = false;
+    }
+    console.log('The winningLines: ', this.winningLines)
+  }
+
+  // this.winningLines = [row1, row2, row3, col1, col2, col3, dia1, dia2]
+  showWinningLine(winTiles: number[]){
+    // this is the win condition for row1
+    if(winTiles[0] === 0 && winTiles[1] === 0 && 
+      winTiles[2] === 0 && winTiles[3] === 1 && 
+      winTiles[4] === 0 && winTiles[5] === 2){
+        this.winningLines[0] = true;
+    }else if(winTiles[0] === 1 && winTiles[1] === 0 && // row2
+      winTiles[2] === 1 && winTiles[3] === 1 && 
+      winTiles[4] === 1 && winTiles[5] === 2){
+        this.winningLines[1] = true;
+    }else if(winTiles[0] === 2 && winTiles[1] === 0 && // row3
+      winTiles[2] === 2 && winTiles[3] === 1 && 
+      winTiles[4] === 2 && winTiles[5] === 2){
+        this.winningLines[2] = true;
+    }else if(winTiles[0] === 0 && winTiles[1] === 0 && // col1
+      winTiles[2] === 1 && winTiles[3] === 0 && 
+      winTiles[4] === 2 && winTiles[5] === 0){
+        this.winningLines[3] = true;
+    }else if(winTiles[0] === 0 && winTiles[1] === 1 && // col2
+      winTiles[2] === 1 && winTiles[3] === 1 && 
+      winTiles[4] === 2 && winTiles[5] === 1){
+        this.winningLines[4] = true;
+    }else if(winTiles[0] === 0 && winTiles[1] === 2 && // col3
+      winTiles[2] === 1 && winTiles[3] === 2 && 
+      winTiles[4] === 2 && winTiles[5] === 2){
+        this.winningLines[5] = true;
+    }else if(winTiles[0] === 0 && winTiles[1] === 0 && // dia1
+      winTiles[2] === 1 && winTiles[3] === 1 && 
+      winTiles[4] === 2 && winTiles[5] === 2){
+        this.winningLines[6] = true;
+    }else if(winTiles[0] === 0 && winTiles[1] === 2 && // dia2 
+      winTiles[2] === 1 && winTiles[3] === 1 && 
+      winTiles[4] === 2 && winTiles[5] === 0){
+        this.winningLines[7] = true;
+    }
   }
 }

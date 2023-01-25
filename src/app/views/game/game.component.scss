@@ -14,12 +14,14 @@
 
 .boardGameContainer{
     margin-top: 100px;
+    width: 100%;
+    align-content: center;
 }
 
 .boardGame {
     width: 500px; /* you can use percentage such as 75vw for viewport width to make it responsive */
     height: 500px; /* this is how you use responsive design this is 75% of viewport height */
-    margin: 0 auto;
+    /*margin: 0 auto;*/
     position: relative;
     z-index: 0;
 }
@@ -84,3 +86,60 @@ canvas {
     justify-content: space-between;
 }
 
+.line {
+    background-color: red;
+    border: thin solid red;
+    width: 500px;
+    position: absolute;
+}
+
+.showLine {
+    display: block;
+}
+
+.hideLine {
+    display: none;
+}
+
+.row1 {
+    top: 185px;
+}
+
+.row2 {
+    top: 360px;
+}
+
+.row3 {
+    top: 519px;
+}
+
+.col1 {
+    top: 350px;
+    transform: rotate(90deg) translate(10px, 165px);
+}
+
+.col2 {
+    top: 350px;
+    transform: rotate(90deg);
+}
+
+.col3 {
+    top: 350px;
+    transform: rotate(90deg) translate(10px, -165px);
+}
+
+.dia1 {
+    top: 360px;
+    transform: rotate(45deg);
+}
+
+.dia2 {
+    top: 360px;
+    transform: rotate(-45deg);
+}
+
+.lineBoardGame {
+    width: 500px;
+    height: 500px;
+    margin: 0 auto;
+}

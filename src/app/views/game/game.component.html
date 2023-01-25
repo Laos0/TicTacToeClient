@@ -1,26 +1,41 @@
 <div class="boardGameContainer">
-    <div class="canvas" *ngIf="isGameOver">
+    <!-- <div class="canvas" *ngIf="isGameOver">
         <canvas #myCanvas width="500px" height="500px"></canvas>
-    </div>
-    <table class="boardGame">
-        <tr>
-            <td #topLeft class="topLeftTile" (click)="topLeftSelect()">{{boardGame[0][0]}}</td>
-            <td #topMid class="topMidTile" (click)="topMidSelect()">{{boardGame[0][1]}}</td>
-            <td #topRight class="topRightTile" (click)="topRightSelect()">{{boardGame[0][2]}}</td>
-        </tr>
-    
-        <tr>
-            <td #midLeft class="midLeftTile" (click)="midLeftSelect()">{{boardGame[1][0]}}</td>
-            <td #midMid class="midMidTile" (click)="midMidSelect()">{{boardGame[1][1]}}</td>
-            <td #midRight class="midRightTile" (click)="midRightSelect()">{{boardGame[1][2]}}</td>
-        </tr>
+    </div> -->
+    <div class="lineBoardGame">
+        <div class="line" [ngClass]="{
+            'row1': winningLines[0], 
+            'row2': winningLines[1],
+            'row3': winningLines[2],
+            'col1': winningLines[3],
+            'col2': winningLines[4],
+            'col3': winningLines[5],
+            'dia1': winningLines[6],
+            'dia2': winningLines[7], 
+            'showLine': isThereWinner,
+            'hideLine': !isThereWinner
+        }">
+        </div>
+        <table class="boardGame">
+            <tr>
+                <td #topLeft class="topLeftTile" (click)="topLeftSelect()">{{boardGame[0][0]}}</td>
+                <td #topMid class="topMidTile" (click)="topMidSelect()">{{boardGame[0][1]}}</td>
+                <td #topRight class="topRightTile" (click)="topRightSelect()">{{boardGame[0][2]}}</td>
+            </tr>
         
-        <tr>
-            <td #botLeft class="botLeftTile" (click)="botLeftSelect()">{{boardGame[2][0]}}</td>
-            <td #botMid class="botMidTile" (click)="botMidSelect()">{{boardGame[2][1]}}</td>
-            <td #botRight class="botRightTile"(click)="botRightSelect()">{{boardGame[2][2]}}</td>
-        </tr>
-    </table>
+            <tr>
+                <td #midLeft class="midLeftTile" (click)="midLeftSelect()">{{boardGame[1][0]}}</td>
+                <td #midMid class="midMidTile" (click)="midMidSelect()">{{boardGame[1][1]}}</td>
+                <td #midRight class="midRightTile" (click)="midRightSelect()">{{boardGame[1][2]}}</td>
+            </tr>
+            
+            <tr>
+                <td #botLeft class="botLeftTile" (click)="botLeftSelect()">{{boardGame[2][0]}}</td>
+                <td #botMid class="botMidTile" (click)="botMidSelect()">{{boardGame[2][1]}}</td>
+                <td #botRight class="botRightTile"(click)="botRightSelect()">{{boardGame[2][2]}}</td>
+            </tr>
+        </table>
+    </div>
 </div>
 <br><br>
 <div class="playerXTurn" *ngIf="currentPlayer === 'X' ">X Turn!</div>
@@ -35,7 +50,6 @@
     </div>
     <div class="oScore"><span class="characO">O:</span>{{oScore}}</div>
 </div>
-
 
 <ng-template #gameOver>
 </ng-template>
