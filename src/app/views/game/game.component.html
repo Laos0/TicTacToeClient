@@ -26,15 +26,16 @@
 <div class="playerXTurn" *ngIf="currentPlayer === 'X' ">X Turn!</div>
 <div class="playerOTurn" *ngIf="currentPlayer === 'O' ">O Turn!</div>
 <div class="player">You are {{player}}</div>
-<div class="xScore"><span class="characX">X:</span>{{xScore}}</div><div class="oScore"><span class="characO">O:</span>{{oScore}}</div>
 
-<div class="gameOver" *ngIf="isGameOver then gameOver">
-
+<div class="parent">
+    <div class="xScore"><span class="characX">X:</span>{{xScore}}</div>
+    <div class="gameOver" *ngIf="isGameOver">
+        <span *ngIf="!isTieGame">GAME OVER {{winner}} wins! </span> <br>
+        <span *ngIf="isTieGame">{{winner}} Game! <br></span> 
+    </div>
+    <div class="oScore"><span class="characO">O:</span>{{oScore}}</div>
 </div>
 
 
 <ng-template #gameOver>
-    <span *ngIf="!isTieGame">GAME OVER {{winner}} wins! </span> <br>
-    <span *ngIf="isTieGame">{{winner}} Game! <br></span> 
-    <button (click)="restart()">Restart</button>
 </ng-template>

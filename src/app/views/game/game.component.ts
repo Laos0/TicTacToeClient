@@ -95,6 +95,12 @@ export class GameComponent implements OnInit {
 
       if(gameOverData.winner === 'TIE'){
         this.isTieGame = true;
+
+        setTimeout(() => {
+          // after 3 seconds restart() runs
+          this.restart();
+        }, 3000);
+        
       }else{
         //this.isTieGame = false;
         // if there is no tie, then draw winning line
@@ -103,6 +109,12 @@ export class GameComponent implements OnInit {
         // update both playes' score
         this.xScore = gameOverData.playerXScore;
         this.oScore = gameOverData.playerOScore;
+
+        setTimeout(() => {
+          // after 3 seconds restart() runs
+          this.restart();
+        }, 3000);
+        
       }
       this.changeRef.detectChanges(); // update the views manually after changes
     })
