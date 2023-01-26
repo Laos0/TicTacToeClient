@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild, Renderer2 } from '@angular/core';
 import { SocketIoService } from 'src/app/services/socket-io-service/socket-io.service';
+import { HttpClient } from '@angular/common/http'
 
 @Component({
   selector: 'app-game',
@@ -63,13 +64,16 @@ export class GameComponent implements OnInit {
   // animations
   isAnimating = false;
 
+  // private renderer can be deleted, purpose was to use it for drawing a line on canvas
   constructor(private socketService: SocketIoService, private changeRef: ChangeDetectorRef, private eleRef: ElementRef,
-    private renderer: Renderer2) 
+    private renderer: Renderer2, private http: HttpClient) 
   {
     
   } 
 
   ngOnInit(): void {
+
+    
     // when user start up the website they are assign X or O player
     // retreiving playerRole data on server side
     this.socketService.socket.on('userRole', (data) => {
