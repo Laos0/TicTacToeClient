@@ -316,7 +316,9 @@ export class GameComponent implements OnInit {
 
   // when the player selects a tile
   selectTile(row, col){
-    this.socketService.socket.emit('selectedTile', this.player, row, col, this.isAnimating);
+    if(this.socketService.isServerLive){
+      this.socketService.socket.emit('selectedTile', this.player, row, col, this.isAnimating);
+    }
     console.log(this.boardGame);
   }
 
