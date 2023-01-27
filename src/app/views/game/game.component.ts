@@ -98,6 +98,8 @@ export class GameComponent implements OnInit {
     // update the current game board so spectators can see
     this.socketService.socket.on('updatedBoard', (data) => {
       this.boardGame = data.boardGame;
+      this.xScore = data.xScore;
+      this.oScore = data.oScore;
       console.log(data.boardGame);
       this.changeRef.detectChanges();
     });
