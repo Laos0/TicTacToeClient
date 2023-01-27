@@ -73,99 +73,107 @@ export class GameComponent implements OnInit {
 
   ngOnInit(): void {
 
-    if(this.socketService.isServerLive){
+    // update the current game board so spectators can see
+    this.socketService.socket.on('updatedBoard', (data) => {
+      this.boardGame = data.boardGame;
+      console.log(data.boardGame);
+      this.changeRef.detectChanges();
+    });
 
-      // when user start up the website they are assign X or O player
-      // retreiving playerRole data on server side
-      this.socketService.socket.on('userRole', (data) => {
-        this.player = data;
-        if(this.player === 'X'){
-          this.isAnimating = true;
-        }
-        this.changeRef.detectChanges();
+    // when user start up the website they are assign X or O player
+    // retreiving playerRole data on server side
+    this.socketService.socket.on('userRole', (data) => {
+      this.player = data;
+      if(this.player === 'X'){
+        this.isAnimating = true;
+      }
+      this.changeRef.detectChanges();
+      if(this.player === null){
+        console.log("You are a spectator");
+      }else{
         console.log("We are " + this.player);
-      })
-  
-      // this is confirmation from server-side that the player's insertion is successful -> update the boardGame
-      this.socketService.socket.on('insertionSuccessful', (player, gameBoard) => {
-        console.log("Successful inserted " + player);
-  
-        this.boardGame = gameBoard;
-        if(this.currentPlayer === 'X'){
-          this.currentPlayer = 'O';
-        }else{
-          this.currentPlayer = 'X';
-        }
-  
-        this.changeRef.detectChanges();
-      });
-  
-      // when a user selects a tile, we turn off their animations
-      this.socketService.socket.on('animationOff', (data) => {
-        console.log("the animation status on/off?: ", data);
-        this.isAnimating = data;
-        this.changeRef.detectChanges();
-      });
-  
-      this.socketService.socket.on('animationOn', (data) => {
-        console.log('The current player is: ', data.curPlayer, " and ", this.currentPlayer);
-        if(this.player === data.curPlayer){
-          console.log("this is the correct player")
-          this.isAnimating = data.turnAnimationOn;
-        }
-        this.changeRef.detectChanges();
-      })
-      
-      
-      // listens to when game is over and a winner is declared
-      // the gameOverData is a json with data: message, isGameOver, winner, winTiles array, curPlayer, playerXScore, and playerOScore
-      this.socketService.socket.on('gameOver', (gameOverData) => {
-        this.isGameOver = gameOverData.isGameOver; // setting it to be true
-        this.winner = gameOverData.winner; // the winner
-  
-        console.log(gameOverData.message + " The winner is: " + gameOverData.winner + " Is it gameover? " + this.isGameOver);
-        this.winningTiles = gameOverData.winTiles; // storing the winning tiles
-        console.log("The winning tiles are: " + this.winningTiles);
-  
-        if(gameOverData.winner === 'TIE'){
-          this.isTieGame = true;
-          this.isThereWinner = false;
-          this.restart();
-          
-        }else{
-          //this.isTieGame = false;
-          // if there is no tie, then draw winning line
-          //this.drawWinningLine();
-          
-          // update both playes' score
-          this.xScore = gameOverData.playerXScore;
-          this.oScore = gameOverData.playerOScore;
-  
-          this.isThereWinner = true;
-  
-          this.showWinningLine(this.winningTiles);
-  
-          this.restart();
-          console.log("This is the winning Tiles after restart: ", this.winningLines);
-          
-        }
-        this.changeRef.detectChanges(); // update the views manually after changes
-      });
-  
-      this.socketService.socket.on('restartComplete', (data) => {
-        this.boardGame = data.gameBoard; // set boardGame to be empty again = ''
-  
-        // clearing the canvas
-        //this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
-  
-        this.isGameOver = false; // deflagging isGameOVer
+      }
+    })
+
+    // this is confirmation from server-side that the player's insertion is successful -> update the boardGame
+    this.socketService.socket.on('insertionSuccessful', (player, gameBoard) => {
+      console.log("Successful inserted " + player);
+
+      this.boardGame = gameBoard;
+      if(this.currentPlayer === 'X'){
+        this.currentPlayer = 'O';
+      }else{
+        this.currentPlayer = 'X';
+      }
+
+      this.changeRef.detectChanges();
+    });
+
+    // when a user selects a tile, we turn off their animations
+    this.socketService.socket.on('animationOff', (data) => {
+      console.log("the animation status on/off?: ", data);
+      this.isAnimating = data;
+      this.changeRef.detectChanges();
+    });
+
+    this.socketService.socket.on('animationOn', (data) => {
+      console.log('The current player is: ', data.curPlayer, " and ", this.currentPlayer);
+      if(this.player === data.curPlayer){
+        console.log("this is the correct player")
+        this.isAnimating = data.turnAnimationOn;
+      }
+      this.changeRef.detectChanges();
+    })
+    
+    
+    // listens to when game is over and a winner is declared
+    // the gameOverData is a json with data: message, isGameOver, winner, winTiles array, curPlayer, playerXScore, and playerOScore
+    this.socketService.socket.on('gameOver', (gameOverData) => {
+      this.isGameOver = gameOverData.isGameOver; // setting it to be true
+      this.winner = gameOverData.winner; // the winner
+
+      console.log(gameOverData.message + " The winner is: " + gameOverData.winner + " Is it gameover? " + this.isGameOver);
+      this.winningTiles = gameOverData.winTiles; // storing the winning tiles
+      console.log("The winning tiles are: " + this.winningTiles);
+
+      if(gameOverData.winner === 'TIE'){
+        this.isTieGame = true;
+        this.isThereWinner = false;
+        this.restart();
         
-        // letting player 0 goes first now
-        this.currentPlayer = data.curPlayer;
+      }else{
+        //this.isTieGame = false;
+        // if there is no tie, then draw winning line
+        //this.drawWinningLine();
+        
+        // update both playes' score
+        this.xScore = gameOverData.playerXScore;
+        this.oScore = gameOverData.playerOScore;
+
+        this.isThereWinner = true;
+
+        this.showWinningLine(this.winningTiles);
+
+        this.restart();
+        console.log("This is the winning Tiles after restart: ", this.winningLines);
+        
+      }
+      this.changeRef.detectChanges(); // update the views manually after changes
+    });
+
+    this.socketService.socket.on('restartComplete', (data) => {
+      this.boardGame = data.gameBoard; // set boardGame to be empty again = ''
+
+      // clearing the canvas
+      //this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
+
+      this.isGameOver = false; // deflagging isGameOVer
       
-        this.changeRef.detectChanges();
-      });
-    }
+      // letting player 0 goes first now
+      this.currentPlayer = data.curPlayer;
+    
+      this.changeRef.detectChanges();
+    });
 
   }
 
@@ -183,7 +191,6 @@ export class GameComponent implements OnInit {
     this.boardTilesHashMap.set(20, this.botLeft);
     this.boardTilesHashMap.set(21, this.botMid);
     this.boardTilesHashMap.set(22, this.botRight);
-
   }
 
   // TODO: This was for drawing on a canvas: OKAY TO DELETE
@@ -316,10 +323,8 @@ export class GameComponent implements OnInit {
 
   // when the player selects a tile
   selectTile(row, col){
-    if(this.socketService.isServerLive){
-      this.socketService.socket.emit('selectedTile', this.player, row, col, this.isAnimating);
-    }
-    console.log(this.boardGame);
+    this.socketService.socket.emit('selectedTile', this.player, row, col, this.isAnimating);
+    console.log("The selected tile from ", this.player, " is: ", row, " ", col);
   }
 
 
