@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild, Renderer2 } from '@angular/core';
 import { SocketIoService } from 'src/app/services/socket-io-service/socket-io.service';
 import { HttpClient } from '@angular/common/http'
+import { Router } from '@angular/router';
+import { AppRoutes } from 'src/app/AppRoutes';
 
 @Component({
   selector: 'app-game',
@@ -64,14 +66,34 @@ export class GameComponent implements OnInit {
   // animations
   isAnimating = false;
 
+  // max capacity of clients
+  maxClients: number;
+
   // private renderer can be deleted, purpose was to use it for drawing a line on canvas
   constructor(private socketService: SocketIoService, private changeRef: ChangeDetectorRef, private eleRef: ElementRef,
-    private renderer: Renderer2, private http: HttpClient) 
+    private renderer: Renderer2, private http: HttpClient, private router: Router) 
   {
     
   } 
 
   ngOnInit(): void {
+
+    // get the current amount of clients on server
+    this.socketService.socket.on('getClientCount', (data) => {
+      this.socketService.clients = data.clientCount;
+    });
+
+
+    // TODO: If socket on server has reach max capacity, receive the number of clients: data.totalClients
+    this.socketService.socket.on('maxCapacity', (data) => {
+      if(data.totalClients > 2){
+        console.log("Max capacity reached!");
+
+        //TODO: Diconnect user and redirect user to max compacity component 
+        this.socketService.socket.disconnect();
+        this.router.navigate(['/max']);
+      }
+    })
 
     // update the current game board so spectators can see
     this.socketService.socket.on('updatedBoard', (data) => {
