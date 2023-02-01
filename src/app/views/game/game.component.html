@@ -46,6 +46,7 @@
     <div class="playerXTurn" *ngIf="currentPlayer === 'X' ">X Turn!</div>
     <div class="playerOTurn" *ngIf="currentPlayer === 'O' ">O Turn!</div>
     <div class="player" [ngClass]="{'animation-stopped': !isAnimating}">{{player}}</div>
+    <div class="timer">{{counter}}</div>
 </div>
 
 <div class="parent">

@@ -3,6 +3,7 @@ import { SocketIoService } from 'src/app/services/socket-io-service/socket-io.se
 import { HttpClient } from '@angular/common/http'
 import { Router } from '@angular/router';
 import { AppRoutes } from 'src/app/AppRoutes';
+import { Subscription, timer } from 'rxjs';
 
 @Component({
   selector: 'app-game',
@@ -69,6 +70,10 @@ export class GameComponent implements OnInit {
   // max capacity of clients
   maxClients: number;
 
+  // the countdown timer
+  countDown: Subscription;
+  counter: number = 10;
+
   // private renderer can be deleted, purpose was to use it for drawing a line on canvas
   constructor(private socketService: SocketIoService, private changeRef: ChangeDetectorRef, private eleRef: ElementRef,
     private renderer: Renderer2, private http: HttpClient, private router: Router) 
@@ -78,18 +83,53 @@ export class GameComponent implements OnInit {
 
   ngOnInit(): void {
 
+
+    // TODO: ADd timer only aafter backend has one
+    this.countDown = timer(0, 1000).subscribe(() => {
+      this.counter--;
+      // when the timer reach 0 or less
+      if(this.counter <= 0){
+        // we need to switch player and reset the counter 
+
+        // preventing memory
+        this.countDown.unsubscribe();
+
+      }
+      this.changeRef.detectChanges();
+    });
+
+    // TODO: listen to timer
+    this.socketService.socket.on('playerChanged', (data) => {
+      this.currentPlayer = data.curPlayer;
+      this.changeRef.detectChanges();
+    })
+
+    // TODO: update the current player for spectators
+    this.socketService.socket.on('getCurPlayer', (data) => {
+      this.currentPlayer = data.curPlayer;
+      console.log("The current player is ", this.currentPlayer);
+    })
+
+    // when a spectator refreshes, we will check if all the roles of X or O is taken
+    // if not, we will assign one of the role to whoever refreshes first
+    // This will solve an issue when X or O disconnects
+    // the data is: data.playerRole
+    this.socketService.socket.on('getAvailableRole', (data) => {
+      console.log("The avilable role: ", data.playerRole);
+    });
+
     // get the current amount of clients on server
     this.socketService.socket.on('getClientCount', (data) => {
       this.socketService.clients = data.clientCount;
     });
 
 
-    // TODO: If socket on server has reach max capacity, receive the number of clients: data.totalClients
+    // If socket on server has reach max capacity, receive the number of clients: data.totalClients
     this.socketService.socket.on('maxCapacity', (data) => {
       if(data.totalClients > 2){
         console.log("Max capacity reached!");
 
-        //TODO: Diconnect user and redirect user to max compacity component 
+        // Diconnect user and redirect user to max compacity component 
         this.socketService.socket.disconnect();
         this.router.navigate(['/max']);
       }
@@ -114,6 +154,7 @@ export class GameComponent implements OnInit {
       this.changeRef.detectChanges();
       if(this.player === null){
         console.log("You are a spectator");
+        console.log("The current player is: ", this.currentPlayer);
       }else{
         console.log("We are " + this.player);
       }
@@ -138,6 +179,7 @@ export class GameComponent implements OnInit {
       console.log("the animation status on/off?: ", data);
       this.isAnimating = data;
       this.changeRef.detectChanges();
+      console.log('is it animating? ', this.isAnimating);
     });
 
     this.socketService.socket.on('animationOn', (data) => {
@@ -299,12 +341,12 @@ export class GameComponent implements OnInit {
       let secNum: number = parseInt(stringNum.slice(stringNum.length - 1, stringNum.length)); // returns last index
       if(firstNum === 0 && secNum === 0){
         console.log("This is a topLeft " + firstNum + secNum);
-        // TODO: return the approiate ElementRef, and dont forget to include it in the signature
+        // return the approiate ElementRef, and dont forget to include it in the signature
         return this.topLeft;
 
       }else if(firstNum === 0 && secNum === 1){
         console.log("This is a topMid " + firstNum + secNum);
-        // TODO: Return approiate ElementRef
+        // Return approiate ElementRef
         return this.topMid;
 
       }else if(firstNum === 0 && secNum === 2){
