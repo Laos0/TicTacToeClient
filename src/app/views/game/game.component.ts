@@ -3,7 +3,7 @@ import { SocketIoService } from 'src/app/services/socket-io-service/socket-io.se
 import { HttpClient } from '@angular/common/http'
 import { Router } from '@angular/router';
 import { AppRoutes } from 'src/app/AppRoutes';
-import { Subscription, timer } from 'rxjs';
+import { Subscription, delay, timer } from 'rxjs';
 
 @Component({
   selector: 'app-game',
@@ -84,31 +84,25 @@ export class GameComponent implements OnInit {
   ngOnInit(): void {
 
 
-    // TODO: ADd timer only aafter backend has one
-    this.countDown = timer(0, 1000).subscribe(() => {
-      this.counter--;
-      // when the timer reach 0 or less
-      if(this.counter <= 0){
-        // we need to switch player and reset the counter 
-
-        // preventing memory
-        this.countDown.unsubscribe();
-
-      }
+    // retrieve the timer countdown from nodejs and update counter here
+    this.socketService.socket.on('getCountDown', (data) => {
+      //console.log('The current countDown: ', data);
+      this.counter = data;
       this.changeRef.detectChanges();
     });
 
-    // TODO: listen to timer
+
+    // TODO: listen to timer -> Currently 'playerChanged' is not on the backend
     this.socketService.socket.on('playerChanged', (data) => {
       this.currentPlayer = data.curPlayer;
       this.changeRef.detectChanges();
-    })
+    });
 
-    // TODO: update the current player for spectators
+    // update the current player for spectators
     this.socketService.socket.on('getCurPlayer', (data) => {
       this.currentPlayer = data.curPlayer;
       console.log("The current player is ", this.currentPlayer);
-    })
+    });
 
     // when a spectator refreshes, we will check if all the roles of X or O is taken
     // if not, we will assign one of the role to whoever refreshes first
@@ -257,6 +251,17 @@ export class GameComponent implements OnInit {
     this.boardTilesHashMap.set(20, this.botLeft);
     this.boardTilesHashMap.set(21, this.botMid);
     this.boardTilesHashMap.set(22, this.botRight);
+  }
+
+  // start the countdown timer
+  startTimer(){
+
+    console.log("IN THE startTimer function");
+  
+  }
+
+  countDownStart(){
+
   }
 
   // TODO: This was for drawing on a canvas: OKAY TO DELETE
